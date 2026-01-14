@@ -1,0 +1,21 @@
+settings = {
+    orientation = {
+        default = "portrait",
+        supported = { "portrait", "portraitUpsideDown", "landscapeLeft", "landscapeRight" },
+    },
+    
+    iphone = {
+        plist = {
+            NSLocationWhenInUseUsageDescription = "SquadSearch needs your location to find nearby players.",
+            NSLocationAlwaysUsageDescription = "SquadSearch needs your location to find nearby players.",
+        },
+    },
+    
+    android = {
+        usesPermissions = {
+            "android.permission.INTERNET",
+            "android.permission.ACCESS_FINE_LOCATION",
+            "android.permission.ACCESS_COARSE_LOCATION",
+        },
+    },
+}

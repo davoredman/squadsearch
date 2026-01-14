@@ -1,0 +1,24 @@
+{
+  "name": "squadsearch-praxis-mapper-server",
+  "version": "1.0.0",
+  "description": "Backend server for SquadSearch location-based ping app",
+  "main": "praxis-mapper-server.js",
+  "scripts": {
+    "start": "node praxis-mapper-server.js",
+    "dev": "nodemon praxis-mapper-server.js"
+  },
+  "keywords": [
+    "location",
+    "ping",
+    "praxis-mapper"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
