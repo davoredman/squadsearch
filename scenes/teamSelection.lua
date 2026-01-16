@@ -1,58 +1,42 @@
--- Landing Scene - Sport Selection
+-- Team Selection Scene
 local composer = require( "composer" )
 local scene = composer.newScene()
 
--- Sports list
-local sports = {
-    { name = "Football", icon = "⚽" },
-    { name = "Basketball", icon = "🏀" },
-    { name = "Baseball", icon = "⚾" },
-    { name = "Tennis", icon = "🎾" },
-    { name = "Soccer", icon = "⚽" },
-    { name = "Volleyball", icon = "🏐" },
-    { name = "Running", icon = "🏃" },
-    { name = "Cycling", icon = "🚴" },
+-- Team options
+local teams = {
+    { name = "Team 1", color = { 0.2, 0.6, 0.9 } },
+    { name = "Team 2", color = { 0.9, 0.3, 0.3 } },
+    { name = "Team 3", color = { 0.3, 0.9, 0.3 } },
+    { name = "Team 4", color = { 0.9, 0.7, 0.2 } },
+    { name = "Solo", color = { 0.6, 0.6, 0.6 } },
 }
 
--- Create sport selection buttons
-local function createSportButtons( sceneGroup )
-    local buttonWidth = display.contentWidth * 0.4
-    local buttonHeight = 80
-    local spacing = 20
-    local startY = display.contentHeight * 0.3
-    local buttonsPerRow = 2
+-- Create team selection buttons
+local function createTeamButtons( sceneGroup )
+    local buttonWidth = display.contentWidth * 0.7
+    local buttonHeight = 70
+    local spacing = 15
+    local startY = display.contentHeight * 0.35
+    local buttonsPerRow = 1
     
-    -- Calculate total width of buttons and spacing to center them
-    local totalWidth = (buttonWidth * buttonsPerRow) + (spacing * (buttonsPerRow - 1))
-    local startX = (display.contentWidth - totalWidth) / 2 + (buttonWidth / 2)
-    
-    local currentX = startX
+    local currentX = display.contentCenterX
     local currentY = startY
     
-    for i = 1, #sports do
-        local sport = sports[i]
+    for i = 1, #teams do
+        local team = teams[i]
         
         -- Create button background
         local button = display.newRoundedRect( sceneGroup, currentX, currentY, buttonWidth, buttonHeight, 15 )
-        button:setFillColor( 0.2, 0.6, 0.9 )
-        button.sport = sport.name
+        button:setFillColor( unpack( team.color ) )
+        button.team = team.name
         
-        -- Create sport icon
-        local iconText = display.newText( {
-            parent = sceneGroup,
-            text = sport.icon,
-            x = currentX,
-            y = currentY - 15,
-            fontSize = 40,
-        } )
-        
-        -- Create sport name
+        -- Create team name
         local nameText = display.newText( {
             parent = sceneGroup,
-            text = sport.name,
+            text = team.name,
             x = currentX,
-            y = currentY + 20,
-            fontSize = 18,
+            y = currentY,
+            fontSize = 24,
             font = native.systemFontBold,
         } )
         nameText:setFillColor( 1, 1, 1 )
@@ -60,8 +44,8 @@ local function createSportButtons( sceneGroup )
         -- Button touch handler
         local function onButtonTouch( event )
             if event.phase == "ended" then
-                _G.gameData.selectedSport = sport.name
-                composer.gotoScene( "scenes.teamSelection", { effect = "slideLeft", time = 300 } )
+                _G.gameData.selectedTeam = team.name
+                composer.gotoScene( "scenes.map", { effect = "slideLeft", time = 300 } )
             end
             return true
         end
@@ -69,12 +53,7 @@ local function createSportButtons( sceneGroup )
         button:addEventListener( "touch", onButtonTouch )
         
         -- Update position for next button
-        if i % buttonsPerRow == 0 then
-            currentX = startX
-            currentY = currentY + buttonHeight + spacing
-        else
-            currentX = currentX + buttonWidth + spacing
-        end
+        currentY = currentY + buttonHeight + spacing
     end
 end
 
@@ -88,27 +67,44 @@ function scene:create( event )
     -- Title
     local title = display.newText( {
         parent = sceneGroup,
-        text = "SquadSearch",
+        text = "Select Your Team",
         x = display.contentCenterX,
-        y = 80,
-        fontSize = 48,
+        y = 100,
+        fontSize = 36,
         font = native.systemFontBold,
     } )
     title:setFillColor( 1, 1, 1 )
     
-    -- Subtitle
-    local subtitle = display.newText( {
+    -- Sport display
+    local sportDisplay = display.newText( {
         parent = sceneGroup,
-        text = "Select Your Sport",
+        text = _G.gameData.selectedSport or "Sport",
         x = display.contentCenterX,
-        y = 140,
-        fontSize = 24,
+        y = 150,
+        fontSize = 20,
         font = native.systemFont,
     } )
-    subtitle:setFillColor( 0.8, 0.8, 0.8 )
+    sportDisplay:setFillColor( 0.8, 0.8, 0.8 )
     
-    -- Create sport buttons
-    createSportButtons( sceneGroup )
+    -- Create team buttons
+    createTeamButtons( sceneGroup )
+    
+    -- Back button
+    local backButton = display.newRoundedRect( sceneGroup, 50, 50, 80, 40, 10 )
+    backButton:setFillColor( 0.5, 0.5, 0.5 )
+    backButton:addEventListener( "tap", function()
+        composer.gotoScene( "scenes.landing", { effect = "slideRight", time = 300 } )
+    end )
+    
+    local backButtonText = display.newText( {
+        parent = sceneGroup,
+        text = "Back",
+        x = 50,
+        y = 50,
+        fontSize = 16,
+        font = native.systemFont,
+    } )
+    backButtonText:setFillColor( 1, 1, 1 )
 end
 
 function scene:show( event )
