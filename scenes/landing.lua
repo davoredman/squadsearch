@@ -15,7 +15,7 @@ local sports = {
 }
 
 -- Create sport selection buttons
-local function createSportButtons()
+local function createSportButtons( sceneGroup )
     local buttonWidth = display.contentWidth * 0.4
     local buttonHeight = 80
     local spacing = 20
@@ -28,22 +28,26 @@ local function createSportButtons()
         local sport = sports[i]
         
         -- Create button background
-        local button = display.newRoundedRect( currentX, currentY, buttonWidth, buttonHeight, 15 )
+        local button = display.newRoundedRect( sceneGroup, currentX, currentY, buttonWidth, buttonHeight, 15 )
         button:setFillColor( 0.2, 0.6, 0.9 )
         button.sport = sport.name
         
         -- Create sport icon
         local iconText = display.newText( {
-            parent = nil,
+            parent = sceneGroup,
             text = sport.icon,
             x = currentX,
             y = currentY - 15,
             fontSize = 40,
         } )
         
+        -- Apply grayscale effect to make icons black and white
+        -- Using setFillColor with grayscale values
+        iconText:setFillColor( 0.4, 0.4, 0.4 ) -- Dark gray for black and white effect
+        
         -- Create sport name
         local nameText = display.newText( {
-            parent = nil,
+            parent = sceneGroup,
             text = sport.name,
             x = currentX,
             y = currentY + 20,
@@ -103,7 +107,7 @@ function scene:create( event )
     subtitle:setFillColor( 0.8, 0.8, 0.8 )
     
     -- Create sport buttons
-    createSportButtons()
+    createSportButtons( sceneGroup )
 end
 
 function scene:show( event )
