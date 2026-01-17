@@ -4,10 +4,10 @@ local scene = composer.newScene()
 
 -- Team options
 local teams = {
-    { name = "Team 1", color = { 0.2, 0.6, 0.9 } },
-    { name = "Team 2", color = { 0.9, 0.3, 0.3 } },
-    { name = "Team 3", color = { 0.3, 0.9, 0.3 } },
-    { name = "Team 4", color = { 0.9, 0.7, 0.2 } },
+    { name = "Big Tuna", color = { 0.2, 0.6, 0.9 } },
+    { name = "Seahawks", color = { 0.9, 0.3, 0.3 } },
+    { name = "Stingers", color = { 0.3, 0.9, 0.3 } },
+    { name = "Gators", color = { 0.9, 0.7, 0.2 } },
     { name = "Solo", color = { 0.6, 0.6, 0.6 } },
 }
 

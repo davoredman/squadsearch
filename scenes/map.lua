@@ -3,10 +3,20 @@ local composer = require( "composer" )
 local json = require( "json" ) -- Solar2D built-in JSON library
 local scene = composer.newScene()
 
+-- Valid team names (must match teamSelection.lua)
+local validTeams = {
+    "Big Tuna",
+    "Seahawks",
+    "Stingers",
+    "Gators",
+    "Solo",
+}
+
 local mapView = nil
 local pingButton = nil
 local pointsDisplay = nil
 local nearbyCountDisplay = nil
+local teamDisplay = nil
 local userMarker = nil
 local pingMarkers = {}
 local isPinging = false
@@ -227,20 +237,10 @@ function scene:create( event )
     local background = display.newRect( sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight )
     background:setFillColor( 0.15, 0.15, 0.2 )
     
-    -- Map placeholder (in a real app, you'd use native.newMapView with Mapbox)
-    local mapBackground = display.newRect( sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight * 0.8 )
-    mapBackground:setFillColor( 0.2, 0.3, 0.4 )
-    
-    -- Map label
-    local mapLabel = display.newText( {
-        parent = sceneGroup,
-        text = "Map View\n(Mapbox integration)",
-        x = display.contentCenterX,
-        y = display.contentCenterY,
-        fontSize = 20,
-        font = native.systemFont,
-    } )
-    mapLabel:setFillColor( 0.7, 0.7, 0.7 )
+    -- Native map view
+    mapView = native.newMapView( display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight * 0.8 )
+    mapView.mapType = "standard" -- or "satellite", "hybrid"
+    sceneGroup:insert( mapView )
     
     -- User marker
     userMarker = display.newCircle( sceneGroup, display.contentCenterX, display.contentCenterY, 12 )
@@ -285,16 +285,7 @@ function scene:create( event )
     } )
     nearbyCountDisplay:setFillColor( 1, 1, 1 )
     
-    -- Sport display
-    local sportDisplay = display.newText( {
-        parent = sceneGroup,
-        text = _G.gameData.selectedSport or "No Sport",
-        x = display.contentCenterX,
-        y = 50,
-        fontSize = 18,
-        font = native.systemFont,
-    } )
-    sportDisplay:setFillColor( 0.8, 0.8, 0.8 )
+    -- Team display will be created/updated in scene:show() to reflect most recent selection
     
     -- Back button
     local backButton = display.newRoundedRect( sceneGroup, 50, 50, 80, 40, 10 )
@@ -321,6 +312,35 @@ function scene:show( event )
     if phase == "will" then
         -- Scene is about to show
     elseif phase == "did" then
+        -- Update team display with most recent selection
+        if teamDisplay then
+            display.remove( teamDisplay )
+            teamDisplay = nil
+        end
+        
+        local teamName = nil
+        if _G.gameData.selectedTeam then
+            -- Check if selected team matches one of the valid teams
+            for i = 1, #validTeams do
+                if _G.gameData.selectedTeam == validTeams[i] then
+                    teamName = _G.gameData.selectedTeam
+                    break
+                end
+            end
+        end
+        
+        if teamName then
+            teamDisplay = display.newText( {
+                parent = sceneGroup,
+                text = teamName,
+                x = display.contentCenterX,
+                y = 50,
+                fontSize = 18,
+                font = native.systemFont,
+            } )
+            teamDisplay:setFillColor( 0.8, 0.8, 0.8 )
+        end
+        
         -- Get location when scene shows
         getCurrentLocation()
         
@@ -351,6 +371,11 @@ function scene:destroy( event )
         end
     end
     pingMarkers = {}
+    
+    if teamDisplay then
+        display.remove( teamDisplay )
+        teamDisplay = nil
+    end
 end
 
 scene:addEventListener( "create", scene )
